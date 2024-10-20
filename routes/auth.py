@@ -35,17 +35,6 @@ async def login(user: User):
     except Exception:
         raise HTTPException(status_code=401, detail="Invalid credentials")
 
-
-@router.get("/user")
-async def get_users():
-    try:
-        token = supabase.auth.get_session().access_token
-        user = supabase.auth.get_user(token)
-        return user
-    except Exception:
-        raise HTTPException(status_code=401, detail="Unauthorized User")
-
-
 @router.post("/update")
 async def update_user(user: UpdateUser):
     try:

@@ -10,3 +10,8 @@ class UpdateUser(BaseModel):
 
 class UpdatePassword(BaseModel):
     password: str
+
+class CreateUser(BaseModel):
+    email: str
+    password: str
+    name: str
