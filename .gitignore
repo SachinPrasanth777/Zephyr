@@ -1,0 +1,4 @@
+supabase
+.env
+*.pyc
+.DS_Store
