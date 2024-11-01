@@ -35,6 +35,7 @@ async def login(user: User):
     except Exception:
         raise HTTPException(status_code=401, detail="Invalid credentials")
 
+
 @router.post("/update")
 async def update_user(user: UpdateUser):
     try:
@@ -58,7 +59,9 @@ async def logout():
 @router.post("/reset")
 async def reset_password(password: UpdatePassword):
     try:
-        supabase.auth.update_user({"password": password.password,"nonce": os.getenv("NONCE")})
+        supabase.auth.update_user(
+            {"password": password.password, "nonce": os.getenv("NONCE")}
+        )
         return JSONResponse(
             status_code=200, content={"message": "Password reset successfully"}
         )
