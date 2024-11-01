@@ -58,6 +58,7 @@ async def retrieve():
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"An error occurred: {str(e)}")
 
+
 @bucket_router.get("/retrieve/{bucket_name}")
 async def retrieve_files(bucket_name: str):
     try:
@@ -72,10 +73,50 @@ async def retrieve_files(bucket_name: str):
                 "updated_at": response.updated_at.isoformat(),
                 "file_size_limit": response.file_size_limit,
                 "allowed_mime_types": response.allowed_mime_types,
-                "files": files
+                "files": files,
             }
             return JSONResponse(status_code=200, content={"message": bucket})
         else:
             raise HTTPException(status_code=404, detail="Bucket not found")
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"An error occurred: {str(e)}")
+
+
+@bucket_router.delete("/delete/{bucket_name}/{file_name}")
+async def delete_file(bucket_name: str, file_name: str):
+    try:
+        response = supabase.storage.from_(bucket_name).remove(file_name)
+        if response:
+            return JSONResponse(
+                status_code=200, content={"message": "File deleted successfully"}
+            )
+        else:
+            raise HTTPException(status_code=500, detail="Failed to delete file")
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"An error occurred: {str(e)}")
+
+
+@bucket_router.get("/url/{bucket_name}/{file_name}")
+async def createUrl(bucket_name: str, file_name: str):
+    try:
+        response = supabase.storage.from_(bucket_name).create_signed_url(
+            file_name, 3600
+        )
+        if response:
+            return response
+        else:
+            raise HTTPException(status_code=500, detail="Failed to create signed URL")
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"An error occurred: {str(e)}")
+
+
+@bucket_router.get("/url/{bucket_name}/{file_name}")
+async def createPublicUrl(bucket_name: str, file_name: str):
+    try:
+        response = supabase.storage.from_(bucket_name).create_public_url(file_name)
+        if response:
+            return response
+        else:
+            raise HTTPException(status_code=500, detail="Failed to create public URL")
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"An error occurred: {str(e)}")
